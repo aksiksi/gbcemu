@@ -1,8 +1,3 @@
-GBCEmu
-------
-
-A fast and functional Gameboy Color emulator in C.
-
 # Phase 1: Microprocessor
 
 ## Thoughts
@@ -34,6 +29,6 @@ The ROM itself will be stored somewhere on disk, so the ROM location has to be p
 
 Instructions will be fetched one by one from the ROM file, and then interpreted. The interpreter could be a simple function that takes the value and passes it to a static lookup table that contains all instructions. The C implementation of each instruction will basically be a function that takes a value as an argument (if applicable) and do something with it. I doubt any of them should return anything.
 
-## CPU
+## CPU Implementation
 
 The CPU is represented by a single `struct` called `cpu_t` (may be changed). For the time being, this `struct` contains pointers to the memory and the values of the internal registers. More may be added as development progresses.
