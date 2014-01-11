@@ -1,41 +1,47 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include "cpu.h"
 
-typedef struct {
-	char *memory;
-	char reg_a;
-	char reg_b;
-} Cpu;
-
-char *allocate_memory(size_t size) {
-	return (char *) calloc(size, sizeof(char));
+int test(int i) {
+    return 42;
 }
 
-int main(int argc, int argv[]) {
-	Cpu cpu;
+char *alloc_memory(size_t size) {
+    return (char *) calloc(size, sizeof(char));
+}
 
-	cpu.memory = allocate_memory(10);
-	cpu.reg_a = 0x08;
-	cpu.reg_b = 0x09;
+void init_cpu_registers(cpu_t *cpu) {
+    /* Set all internal registers of CPU to 0. */
+    cpu->A = 0x00;
+    cpu->F = 0x00;
+    cpu->B = 0x00;
+    cpu->C = 0x00;
+    cpu->D = 0x00;
+    cpu->E = 0x00;
+    cpu->H = 0x00;
+    cpu->L = 0x00;
+    cpu->SP = 0x00;
+    cpu->IP = 0x00;
+    cpu->AF = 0x0000;
+    cpu->BC = 0x0000;
+    cpu->DE = 0x0000;
+    cpu->HL = 0x0000;
+}
 
-	char *memory = cpu.memory;
-	int i;
+void run_cpu(cpu_t *cpu) {
+    // Init registers
+    init_cpu_registers(cpu);
+    
+    // Show memory address range
+    printf("\nFrom: %p -> To: %p\n", cpu->memory_start, cpu->memory + cpu->memory_size);
 
-	while (i < (int)sizeof(memory)) {
-		printf("%d\n", *(memory++));
-	}
+    // Show current address
+    printf("Current: %p, Start: %p\n", cpu->memory, cpu->memory_start);
 
-	*memory = 0x10;
-	printf("%d\n", *memory);
+    // Play with registers
+    cpu->A = 0x40;
+    cpu->B = 0x20;
+    cpu->SP = 0x43;
+    int AB = (cpu->A << 8) + cpu->B;
 
-	*memory = 0x11;
-	printf("%d\n", *(memory++));
-
-	printf("%d\n", cpu.reg_a);
-
-	// Free the memory
-	free(cpu.memory);
-
-	return 0;
+    printf("A = %x, B = %x, AB = %x, SP = %x\n", cpu->A, cpu->B, AB, cpu->SP);
 }
