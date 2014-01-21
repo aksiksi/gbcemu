@@ -21,7 +21,7 @@ typedef struct _cpu_t {
     short A; // Accumulator
     short F; // Flags = Z C H N 0 0 0 0
     short AF;
-    
+
     short B; // GP
     short C; // Counter
     short BC;

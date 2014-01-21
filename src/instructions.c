@@ -3,63 +3,63 @@
 
 void split_opcode(short bytes[], short opcode)
 {
-	/* Split the opcode into upper and lower bytes using masking and shifting. */
-	short mask;
+    /* Split the opcode into upper and lower bytes using masking and shifting. */
+    short mask;
 
-	// Lower byte
-	mask = 0x0F;
-	bytes[0] = (opcode & mask);
+    // Lower byte
+    mask = 0x0F;
+    bytes[0] = (opcode & mask);
 
-	// Upper byte
-	mask = 0xF0;
-	bytes[1] = (opcode & mask) >> 4;
+    // Upper byte
+    mask = 0xF0;
+    bytes[1] = (opcode & mask) >> 4;
 }
 
 void load_rom(cpu_t *cpu)
 {
-	int c;
-	FILE *fp;
+    int c;
+    FILE *fp;
 
-	// ROM file handling
-	fp = fopen(cpu->rom_filename, "rb");
-	
-	if (fp == NULL) {
-		fprintf(stderr, "Cannot open file specified.\n");
-		exit(0);
-	}
+    // ROM file handling
+    fp = fopen(cpu->rom_filename, "rb");
 
-	// Get ROM size
-	int rom_size;
-	fseek(fp, 0L, SEEK_END);
-	rom_size = ftell(fp);
-	fseek(fp, 0L, SEEK_SET);
+    if (fp == NULL) {
+        fprintf(stderr, "Cannot open file specified.\n");
+        exit(0);
+    }
 
-	// Allocate necessary memory for ROM then save into CPU
-	cpu->rom = alloc_memory((size_t)rom_size);
-	cpu->rom_start = cpu->rom;
-	cpu->rom_size = rom_size;
+    // Get ROM size
+    int rom_size;
+    fseek(fp, 0L, SEEK_END);
+    rom_size = ftell(fp);
+    fseek(fp, 0L, SEEK_SET);
 
-	// Copy ROM contents into memory
-	while ((c = fgetc(fp)) != EOF) {
-		*cpu->rom = c;
-		printf("Location: %p, Value: %x\n", cpu->rom, *cpu->rom);
-		cpu->rom++;
-	}
+    // Allocate necessary memory for ROM then save into CPU
+    cpu->rom = alloc_memory((size_t)rom_size);
+    cpu->rom_start = cpu->rom;
+    cpu->rom_size = rom_size;
 
-	// Rewind ROM pointer
-	cpu->rom = cpu->rom_start;
+    // Copy ROM contents into memory
+    while ((c = fgetc(fp)) != EOF) {
+        *cpu->rom = c;
+        printf("Location: %p, Value: %x\n", cpu->rom, *cpu->rom);
+        cpu->rom++;
+    }
+
+    // Rewind ROM pointer
+    cpu->rom = cpu->rom_start;
 }
 
 void ld(cpu_t *cpu, short opcode)
 {
-	printf("Not implemented!\n");
+    printf("Not implemented!\n");
 }
 
 void and(cpu_t *cpu, short opcode)
 {
-	short source;
+    short source;
 
-	switch (opcode) {
+    switch (opcode) {
         case 0xA0:
             source = cpu->B;
             break;
@@ -87,7 +87,7 @@ void and(cpu_t *cpu, short opcode)
     }
 
     printf("A = %x, S = %x -> ", cpu->A, source);
-    
+
     cpu->A &= source;
 
     printf("A = %x\n", cpu->A);
@@ -95,8 +95,8 @@ void and(cpu_t *cpu, short opcode)
 
 void or(cpu_t *cpu, short opcode)
 {
-	short source;
-    
+    short source;
+
     switch (opcode) {
         case 0xB0:
             source = cpu->B;
@@ -131,8 +131,8 @@ void or(cpu_t *cpu, short opcode)
 
 void xor(cpu_t *cpu, short opcode)
 {
- 	short source;
-    
+	short source;
+
     switch (opcode) {
         case 0xA8:
             source = cpu->B;
@@ -165,32 +165,32 @@ void xor(cpu_t *cpu, short opcode)
 
 void cp(cpu_t *cpu, short opcode)
 {
-	printf("Not implemented!\n");
+    printf("Not implemented!\n");
 }
 
 void interpret_instruction(cpu_t *cpu, short opcode)
 {
-	// Split opcode into upper and lower bytes for easier use
-	short bytes[2];
-	split_opcode(bytes, opcode);
-	printf("Whole: %x, Lower: %x, Upper: %x\n", opcode, bytes[0], bytes[1]);
+    // Split opcode into upper and lower bytes for easier use
+    short bytes[2];
+    split_opcode(bytes, opcode);
+    printf("Whole: %x, Lower: %x, Upper: %x\n", opcode, bytes[0], bytes[1]);
 
-	// Simple opcode interpreter
-	switch (bytes[1]) {
-		case 0xA:
-			if (bytes[0] < 8)
-				and(cpu, opcode);
-			else
-				xor(cpu, opcode);
-			break;
+    // Simple opcode interpreter
+    switch (bytes[1]) {
+        case 0xA:
+            if (bytes[0] < 8)
+                and(cpu, opcode);
+            else
+                xor(cpu, opcode);
+            break;
 
-		case 0xB:
-			if (bytes[0] < 8)
-				or(cpu, opcode);
-			break;
+        case 0xB:
+            if (bytes[0] < 8)
+                or(cpu, opcode);
+            break;
 
-		default:
-			printf("Unknown opcode: %x\n", opcode);
-			break;
-	}
+        default:
+            printf("Unknown opcode: %x\n", opcode);
+            break;
+    }
 }
