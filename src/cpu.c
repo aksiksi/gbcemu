@@ -8,6 +8,11 @@ char *alloc_memory(size_t size)
     return (char *) calloc(size, sizeof(char));
 }
 
+void rewind_rom(cpu_t *cpu)
+{
+    cpu->rom = cpu->rom_start;
+}
+
 void init_cpu_registers(cpu_t *cpu)
 {
     /* Set all internal registers of CPU to 0. */
@@ -45,7 +50,7 @@ void run_cpu(cpu_t *cpu)
     printf("Current: %p, Start: %p\n", cpu->memory, cpu->memory_start);
 
     // Play with registers
-    cpu->A = 0x40;
+    cpu->A = 0x50;
     cpu->B = 0x20;
     cpu->SP = 0x43;
     cpu->H = 0x40;
@@ -60,6 +65,10 @@ void run_cpu(cpu_t *cpu)
         i++;
     }
 
+    printf("ROM at: %p, %p, %x\n", cpu->rom, cpu->rom_start, *cpu->rom);
+
+    rewind_rom(cpu);
+
     // Test register and memory values
     cpu->D = 0x0F;
     *(cpu->memory_start + cpu->HL) = 0x0F;
@@ -68,9 +77,13 @@ void run_cpu(cpu_t *cpu)
     while (cpu->rom != (cpu->rom_start + cpu->rom_size)) {
         current_opcode = *cpu->rom;
         interpret_instruction(cpu, current_opcode);
+        printf("OPCODE: %x\n", current_opcode);
+        cpu->rom++;
     }
 
     printf("A = %x\n", cpu->A);
+
+    printf("ROM at: %p, %p, %x\n", cpu->rom, cpu->rom_start, *cpu->rom);
 
     // Free ALL memory once complete
     free(cpu->rom_start);

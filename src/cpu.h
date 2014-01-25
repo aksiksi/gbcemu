@@ -42,5 +42,6 @@ typedef struct _cpu_t {
 char *alloc_memory(size_t size);
 void run_cpu(cpu_t *cpu);
 static void init_cpu_registers(cpu_t *cpu);
+void rewind_rom(cpu_t *cpu);
 
 #endif

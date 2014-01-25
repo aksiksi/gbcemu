@@ -16,7 +16,6 @@ int main(int argc, int argv[])
     // Fill with dummy values
     for (i = 0; i < size; i++, cpu.memory++) {
         *cpu.memory = i + 1;
-        printf("i: %d, stored: %d\n", i, *cpu.memory);
     }
 
     // Run CPU
